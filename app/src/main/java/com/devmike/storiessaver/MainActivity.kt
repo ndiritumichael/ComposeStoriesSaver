@@ -16,6 +16,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +35,7 @@ import com.devmike.storiessaver.screens.StatusList
 
 import com.devmike.storiessaver.screens.components.StoryTabRow
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -59,12 +61,16 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     @Composable
     fun SaverScreen() {
+        val coroutineScope = rememberCoroutineScope()
+        val scaffoldStates = rememberScaffoldState()
         StoriesSaverTheme {
             val navController = rememberNavController()
             val allscreens = AllScreens.values().toList()
             val backStackEntry = navController.currentBackStackEntryAsState()
             val currentScreen = AllScreens.fromRoute(backStackEntry.value?.destination?.route)
             Scaffold(
+                scaffoldState = scaffoldStates
+                ,
                 topBar = {
                     StoryTabRow(
                         allScreens = allscreens,
@@ -72,7 +78,14 @@ class MainActivity : ComponentActivity() {
                         currentScreen = currentScreen
                     )
                 }, floatingActionButton = {
-                    RefreshStatus(storiesViewModel)
+                    RefreshStatus(){
+                        storiesViewModel.getFiles()
+                        coroutineScope.launch {
+                            scaffoldStates.snackbarHostState.showSnackbar(message = "Refreshing...",
+                            duration = SnackbarDuration.Short)
+                        }
+
+                    }
                 }
             ) { innerpadding ->
                 StoryNavHost(
@@ -100,11 +113,20 @@ class MainActivity : ComponentActivity() {
         ) {
 
             composable(AllScreens.Images.name) {
+                val itemsNumber =  "${storiesViewModel.imageStatus.value.size} Statuses Found"
+                Surface() {
+                    Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
+                }
                 StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value)
 
 
             }
             composable(AllScreens.Videos.name) {
+
+                val itemsNumber =  "${storiesViewModel.videoStatus.value.size} Statuses Found"
+                Surface() {
+                    Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
+                }
                 StatusList(navHostController = navHostController,storiesViewModel.videoStatus.value)
 
             }
@@ -133,12 +155,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun RefreshStatus(storiesViewModel: StoriesViewModel = viewModel()) {
+    fun RefreshStatus(onclick : () -> Unit) {
         FloatingActionButton(
-            onClick = {
-                storiesViewModel.getFiles()
-
-            },
+            onClick = onclick
+                ,
             elevation = FloatingActionButtonDefaults.elevation(6.dp)
         ) {
             Icon(painterResource(id = R.drawable.ic_baseline_refresh_24), contentDescription = " Refresh Icon")

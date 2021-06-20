@@ -11,10 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,6 +97,7 @@ statusList : List<Status>
 
 ) {
 
+
    // Log.d("Status List", "${viewModel.statusListstate.value}")
     LazyColumn(modifier = Modifier
         .fillMaxHeight(1f)
@@ -131,7 +129,9 @@ statusList: List<Status>){
 Column {
 Row {
    SingleFileScreen.SingleScreen(status = statusList[rowIndex * 2],
-   modifier = Modifier.weight(1f)){}
+   modifier = Modifier.weight(1f)){
+
+   }
     Spacer(modifier = Modifier.width(16.dp))
 if (statusList.size>= rowIndex* 2 +2){
 
