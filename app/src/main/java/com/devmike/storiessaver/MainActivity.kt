@@ -9,9 +9,7 @@ import com.devmike.storiessaver.ui.theme.StoriesSaverTheme
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -117,6 +115,9 @@ class MainActivity : ComponentActivity() {
                 Surface() {
                     Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
                 }
+                Spacer(modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(16.dp))
                 StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value)
 
 
@@ -135,26 +136,30 @@ class MainActivity : ComponentActivity() {
 
             }
 
-            composable(route = "fullScreen/{path}",
-            arguments = listOf(
-navArgument("path"){
-type = NavType.StringType
-}
-            ))
+            composable(route = "fullScreen",
+
+          )
             {
-                val path  = remember {
-it.arguments?.getString("path")
+
+
+                val status = navHostController.previousBackStackEntry?.arguments?.getParcelable<Status>("key")
+                
+               // Text(text = "${status?.path}")
+
+                if (status != null) {
+                    FullScreenStatus(status = status)
                 }
 
 
 
 
 
+/*
                 if (path != null) {
-                    Text(text = path)
-                }
+                    Text(text = path.toString())
+                }*/
 
-            //  FullScreenStatus(status = status)
+
 
 
 

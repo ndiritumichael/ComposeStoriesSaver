@@ -5,6 +5,7 @@ package com.devmike.storiessaver.screens.components
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,7 +36,7 @@ object SingleFileScreen{
   
     @ExperimentalMaterialApi
     @Composable
-    fun SingleScreen(modifier: Modifier = Modifier,status: Status,navController: NavController){
+    fun SingleScreen(modifier: Modifier = Modifier,status: Status,navController: NavController,index : Int){
       val glider = rememberGlidePainter(request = Uri.fromFile(File(status.path)) )
 
 
@@ -52,12 +53,17 @@ object SingleFileScreen{
         Card(onClick = {
            Log.d("mikewil",status.path)
 
-            val route = "fullScreen/${status.path}"
+            val route = "fullScreen/${index}/"
 
             Log.d("mikewil",route)
+            navController.currentBackStackEntry?.arguments = Bundle().apply {
+                putParcelable("key",status)
+            }
 
 
-            //navController.navigate()
+            navController.navigate(route = "fullScreen")
+
+
 
         },
 
@@ -141,15 +147,18 @@ Column {
 Row {
    SingleFileScreen.SingleScreen(status = statusList[rowIndex * 2],
    modifier = Modifier.weight(1f),
-   navController = navController)
+   navController = navController, index = rowIndex *2
+   )
     Spacer(modifier = Modifier.width(16.dp))
 if (statusList.size>= rowIndex* 2 +2){
 
     SingleFileScreen.SingleScreen(
         status = statusList[rowIndex *2 + 1],
         modifier = Modifier.weight(1f),
-        navController = navController
+        navController = navController,
+        index = rowIndex*2+1
     )
+
 
 
 }
