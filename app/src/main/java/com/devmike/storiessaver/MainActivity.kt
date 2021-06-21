@@ -16,6 +16,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -23,17 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 import com.devmike.storiessaver.model.STATUS_TYPE
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.screens.AllScreens
-import com.devmike.storiessaver.screens.StatusList
+import com.devmike.storiessaver.screens.FullScreenStatus
+import com.devmike.storiessaver.screens.components.StatusList
+
 
 import com.devmike.storiessaver.screens.components.StoryTabRow
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -59,20 +61,31 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     @Composable
     fun SaverScreen() {
+        val coroutineScope = rememberCoroutineScope()
+        val scaffoldStates = rememberScaffoldState()
         StoriesSaverTheme {
             val navController = rememberNavController()
             val allscreens = AllScreens.values().toList()
             val backStackEntry = navController.currentBackStackEntryAsState()
             val currentScreen = AllScreens.fromRoute(backStackEntry.value?.destination?.route)
             Scaffold(
-                topBar = {
+                scaffoldState = scaffoldStates
+                ,
+              /*  topBar = {
                     StoryTabRow(
                         allScreens = allscreens,
                         onTabSelected = { screen -> navController.navigate(screen.name) },
                         currentScreen = currentScreen
                     )
-                }, floatingActionButton = {
-                    RefreshStatus(storiesViewModel)
+                }, */floatingActionButton = {
+                    RefreshStatus(){
+                        storiesViewModel.getFiles()
+                        coroutineScope.launch {
+                            scaffoldStates.snackbarHostState.showSnackbar(message = "Refreshing...",
+                            duration = SnackbarDuration.Short)
+                        }
+
+                    }
                 }
             ) { innerpadding ->
                 StoryNavHost(
@@ -100,15 +113,50 @@ class MainActivity : ComponentActivity() {
         ) {
 
             composable(AllScreens.Images.name) {
+                val itemsNumber =  "${storiesViewModel.imageStatus.value.size} Statuses Found"
+                Surface() {
+                    Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
+                }
                 StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value)
 
 
             }
             composable(AllScreens.Videos.name) {
+
+                val itemsNumber =  "${storiesViewModel.videoStatus.value.size} Statuses Found"
+                Surface() {
+                    Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
+                }
                 StatusList(navHostController = navHostController,storiesViewModel.videoStatus.value)
 
             }
             composable(AllScreens.Saved.name) {
+
+
+            }
+
+            composable(route = "fullScreen/{path}",
+            arguments = listOf(
+navArgument("path"){
+type = NavType.StringType
+}
+            ))
+            {
+                val path  = remember {
+it.arguments?.getString("path")
+                }
+
+
+
+
+
+                if (path != null) {
+                    Text(text = path)
+                }
+
+            //  FullScreenStatus(status = status)
+
+
 
 
             }
@@ -133,12 +181,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun RefreshStatus(storiesViewModel: StoriesViewModel = viewModel()) {
+    fun RefreshStatus(onclick : () -> Unit) {
         FloatingActionButton(
-            onClick = {
-                storiesViewModel.getFiles()
-
-            },
+            onClick = onclick
+                ,
             elevation = FloatingActionButtonDefaults.elevation(6.dp)
         ) {
             Icon(painterResource(id = R.drawable.ic_baseline_refresh_24), contentDescription = " Refresh Icon")

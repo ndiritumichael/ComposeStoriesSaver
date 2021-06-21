@@ -53,7 +53,8 @@ fun StoryTabRow(
                     text = screen.name,
                     icon = screen.icon,
                     onSelected = { onTabSelected(screen) },
-                    selected = currentScreen == screen
+                    selected = currentScreen == screen,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -66,7 +67,9 @@ private fun RallyTab(
     text: String,
     icon: Int,
     onSelected: () -> Unit,
-    selected: Boolean
+    selected: Boolean,
+    modifier: Modifier = Modifier
+
 ) {
     val color = MaterialTheme.colors.onSurface
     val durationMillis = if (selected) TabFadeInAnimationDuration else TabFadeOutAnimationDuration
@@ -82,10 +85,12 @@ private fun RallyTab(
         animationSpec = animSpec
     )
     Row(
-        modifier = Modifier
+        modifier = modifier
+
             .padding(16.dp)
             .animateContentSize()
             .height(TabHeight)
+
             .selectable(
                 selected = selected,
                 onClick = onSelected,
