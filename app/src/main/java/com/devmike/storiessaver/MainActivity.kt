@@ -24,14 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 import com.devmike.storiessaver.model.STATUS_TYPE
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.screens.AllScreens
-import com.devmike.storiessaver.screens.StatusList
+import com.devmike.storiessaver.screens.FullScreenStatus
+import com.devmike.storiessaver.screens.components.StatusList
+
 
 import com.devmike.storiessaver.screens.components.StoryTabRow
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
@@ -71,13 +71,13 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 scaffoldState = scaffoldStates
                 ,
-                topBar = {
+              /*  topBar = {
                     StoryTabRow(
                         allScreens = allscreens,
                         onTabSelected = { screen -> navController.navigate(screen.name) },
                         currentScreen = currentScreen
                     )
-                }, floatingActionButton = {
+                }, */floatingActionButton = {
                     RefreshStatus(){
                         storiesViewModel.getFiles()
                         coroutineScope.launch {
@@ -131,6 +131,32 @@ class MainActivity : ComponentActivity() {
 
             }
             composable(AllScreens.Saved.name) {
+
+
+            }
+
+            composable(route = "fullScreen/{path}",
+            arguments = listOf(
+navArgument("path"){
+type = NavType.StringType
+}
+            ))
+            {
+                val path  = remember {
+it.arguments?.getString("path")
+                }
+
+
+
+
+
+                if (path != null) {
+                    Text(text = path)
+                }
+
+            //  FullScreenStatus(status = status)
+
+
 
 
             }

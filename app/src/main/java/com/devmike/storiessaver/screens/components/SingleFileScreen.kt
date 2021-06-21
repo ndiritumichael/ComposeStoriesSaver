@@ -1,5 +1,5 @@
 
-package com.devmike.storiessaver.screens
+package com.devmike.storiessaver.screens.components
 
 
 
@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.devmike.storiessaver.model.STATUS_TYPE
 import com.devmike.storiessaver.model.Status
@@ -34,7 +35,7 @@ object SingleFileScreen{
   
     @ExperimentalMaterialApi
     @Composable
-    fun SingleScreen(modifier: Modifier = Modifier,status: Status,clicked: () -> Unit){
+    fun SingleScreen(modifier: Modifier = Modifier,status: Status,navController: NavController){
       val glider = rememberGlidePainter(request = Uri.fromFile(File(status.path)) )
 
 
@@ -48,7 +49,17 @@ object SingleFileScreen{
 
         })*/
 
-        Card(onClick = clicked,
+        Card(onClick = {
+           Log.d("mikewil",status.path)
+
+            val route = "fullScreen/${status.path}"
+
+            Log.d("mikewil",route)
+
+
+            //navController.navigate()
+
+        },
 
         modifier = modifier
             .padding(top = 8.dp, bottom = 8.dp)
@@ -129,16 +140,16 @@ statusList: List<Status>){
 Column {
 Row {
    SingleFileScreen.SingleScreen(status = statusList[rowIndex * 2],
-   modifier = Modifier.weight(1f)){
-
-   }
+   modifier = Modifier.weight(1f),
+   navController = navController)
     Spacer(modifier = Modifier.width(16.dp))
 if (statusList.size>= rowIndex* 2 +2){
 
     SingleFileScreen.SingleScreen(
         status = statusList[rowIndex *2 + 1],
-        modifier = Modifier.weight(1f)
-    ){}
+        modifier = Modifier.weight(1f),
+        navController = navController
+    )
 
 
 }
