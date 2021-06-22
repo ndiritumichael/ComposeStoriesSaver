@@ -110,6 +110,11 @@ class StoriesViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
+    fun share(status: Status) {
+        Log.d("share", "Share Button Clicked ${status.path}")
+
+    }
+
     /*fun extractBitmap(file:File):Bitmap?{
        try {
            if (file.extension == "mp4"){
