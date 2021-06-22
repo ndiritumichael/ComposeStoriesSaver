@@ -12,6 +12,7 @@ enum class STATUS_TYPE {
 @Parcelize
 data class Status(val path: String,
                   val type: STATUS_TYPE,
-                  val bitmap: Bitmap? = null ):Parcelable{
+                  val bitmap: Bitmap? = null ,
+val saved : Boolean = false):Parcelable{
 
 }

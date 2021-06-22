@@ -69,13 +69,13 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 scaffoldState = scaffoldStates
                 ,
-              /*  topBar = {
+               topBar = {
                     StoryTabRow(
                         allScreens = allscreens,
                         onTabSelected = { screen -> navController.navigate(screen.name) },
                         currentScreen = currentScreen
                     )
-                }, */floatingActionButton = {
+                }, floatingActionButton = {
                     RefreshStatus(){
                         storiesViewModel.getFiles()
                         coroutineScope.launch {
