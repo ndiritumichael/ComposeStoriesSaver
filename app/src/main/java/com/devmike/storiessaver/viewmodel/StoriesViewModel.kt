@@ -115,6 +115,15 @@ class StoriesViewModel(application: Application):AndroidViewModel(application) {
 
     }
 
+    fun delete(status: Status) {
+
+
+    }
+
+    fun save(status: Status) {
+
+    }
+
     /*fun extractBitmap(file:File):Bitmap?{
        try {
            if (file.extension == "mp4"){

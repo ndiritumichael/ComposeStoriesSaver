@@ -102,7 +102,7 @@ object SingleFileScreen{
                         contentScale = ContentScale.Fit,
                         alignment = Alignment.Center
                     )
-                    BottomRow(status = status, share = { storiesViewModel.share(it) }, delete = { /*TODO*/ }) {
+                    BottomRow(status = status, share = { storiesViewModel.share(it) }, delete = { storiesViewModel.delete(it)}) { storiesViewModel.save(it)
 
                     }
                 }

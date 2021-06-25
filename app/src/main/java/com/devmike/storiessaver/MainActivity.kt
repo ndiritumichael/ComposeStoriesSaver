@@ -76,11 +76,12 @@ class MainActivity : ComponentActivity() {
                         currentScreen = currentScreen
                     )
                 }, floatingActionButton = {
-                    RefreshStatus(){
+                    RefreshStatus{
                         storiesViewModel.getFiles()
                         coroutineScope.launch {
                             scaffoldStates.snackbarHostState.showSnackbar(message = "Refreshing...",
-                            duration = SnackbarDuration.Short)
+                            duration = SnackbarDuration.Short,
+                            )
                         }
 
                     }
