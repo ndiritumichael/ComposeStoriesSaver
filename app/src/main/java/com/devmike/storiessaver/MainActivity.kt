@@ -1,47 +1,51 @@
 package com.devmike.storiessaver
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
+import android.util.Log
+import android.view.contentcapture.ContentCaptureContext
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.tooling.preview.Preview
 import com.devmike.storiessaver.ui.theme.StoriesSaverTheme
-import android.os.Environment
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.*
-import com.devmike.storiessaver.model.STATUS_TYPE
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.screens.AllScreens
 import com.devmike.storiessaver.screens.FullScreenStatus
 import com.devmike.storiessaver.screens.components.StatusList
-
-
 import com.devmike.storiessaver.screens.components.StoryTabRow
+
+
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
 import kotlinx.coroutines.launch
-import java.io.File
 
 
 class MainActivity : ComponentActivity() {
 
+
     private val storiesViewModel: StoriesViewModel by lazy {
         ViewModelProvider(this).get(StoriesViewModel::class.java)
     }
+
+
 
 
     @ExperimentalMaterialApi
@@ -49,10 +53,84 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
+
         setContent {
-            SaverScreen()
+            val context = LocalContext.current
+
+
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission()) { isGranted ->
+                storiesViewModel.updatePermssions(isGranted)
+                when (isGranted) {
+                    true -> {
+
+                        Log.d("perms","Storage Enabled")
+
+                        storiesViewModel.getFiles()
+                    }
+                    false-> {
+                        Log.d("perms","Storage DisEnabled")
+                    }
+                }
+
+                
+            }
+
+            storiesViewModel.updatePermssions(checkPermission(context))
+            var isPermissionenabled = storiesViewModel.isStoragePermissionEnabled.value
+
+
+
+
+
+            if (isPermissionenabled){
+                SaverScreen()
+                Log.d("perms","Permissions allowed")
+
+
+            } else{
+             Button(onClick = { launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE) },
+             ){
+                 Text(text = "Click Here To allow Permissions")
+             }
+            }
+
+
 
         }
+    }
+
+   /* private fun askForPermissions(){
+        val launcher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted ->
+            when (isGranted) {
+                true -> {
+                    storiesViewModel.getFiles()
+                }
+                false-> {
+
+                }
+            }
+
+        }
+
+        launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+    }*/
+    private fun checkPermission(context: Context):Boolean{
+      return  when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) -> true
+
+
+            else -> {
+                Log.d("perms","Permissions  when  not allowed")
+
+
+                false}
+
+
+        }
+
+
+
     }
 
 
@@ -69,12 +147,17 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 scaffoldState = scaffoldStates
                 ,
-               topBar = {
-                    StoryTabRow(
-                        allScreens = allscreens,
-                        onTabSelected = { screen -> navController.navigate(screen.name) },
-                        currentScreen = currentScreen
-                    )
+                topBar = {
+                    if (currentScreen!= AllScreens.FullScreen) {
+
+
+                        StoryTabRow(
+                            allScreens = allscreens,
+                            onTabSelected = { screen -> navController.navigate(screen.name) },
+                            currentScreen = currentScreen
+                        )
+                    }
+
                 }, floatingActionButton = {
                     RefreshStatus{
                         storiesViewModel.getFiles()
@@ -88,6 +171,7 @@ class MainActivity : ComponentActivity() {
                 }
             ) { innerpadding ->
                 StoryNavHost(
+
                     navHostController = navController,
                     modifier = Modifier.padding(innerpadding)
                 )
@@ -102,7 +186,11 @@ class MainActivity : ComponentActivity() {
 
     @ExperimentalMaterialApi
     @Composable
-    private fun StoryNavHost(navHostController: NavHostController, modifier: Modifier = Modifier) {
+    private fun StoryNavHost(
+
+        navHostController: NavHostController,
+        modifier: Modifier = Modifier
+    ) {
 
 
         NavHost(
@@ -137,7 +225,7 @@ class MainActivity : ComponentActivity() {
 
             }
 
-            composable(route = "fullScreen",
+            composable(AllScreens.FullScreen.name
 
           )
             {
