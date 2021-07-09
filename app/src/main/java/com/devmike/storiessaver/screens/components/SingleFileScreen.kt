@@ -3,7 +3,6 @@ package com.devmike.storiessaver.screens.components
 
 
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -22,23 +21,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.devmike.storiessaver.R
-import com.devmike.storiessaver.model.STATUS_TYPE
+
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
 
-import com.google.accompanist.coil.rememberCoilPainter
+
 import com.google.accompanist.glide.rememberGlidePainter
-import com.google.accompanist.imageloading.ImageLoadState
-import kotlinx.coroutines.delay
+
 import java.io.File
 
 object SingleFileScreen{
@@ -80,32 +78,39 @@ object SingleFileScreen{
 
         modifier = modifier
             .padding(top = 8.dp, bottom = 8.dp)
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        MaterialTheme.colors.primary,
-                        MaterialTheme.colors.surface
-                    )
-                )
-            )
-
-
-            //.fillMaxWidth(0.5f)
+            //.fillMaxWidth(0.5f) using this means it will utilize half of available space
             .height(300.dp)) {
-            Box(modifier = modifier,
+            Box(modifier = modifier.fillMaxSize(),
 
                 contentAlignment = Alignment.Center){
-                Column {
 
                     Image(painter = glider,
                         contentDescription ="pictureDetail",
                         contentScale = ContentScale.Fit,
-                        alignment = Alignment.Center
-                    )
-                    BottomRow(status = status, share = { storiesViewModel.share(it) }, delete = { /*TODO*/ }) {
+                        alignment = Alignment.Center,
 
-                    }
-                }
+                    )
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color.Transparent,
+                                Color.Transparent,
+                                MaterialTheme.colors.surface
+                            ),
+                            startY = 300f
+                        )
+                    ))
+               Box(modifier = Modifier.fillMaxSize(1f)
+                   .padding(8.dp),
+               contentAlignment = Alignment.BottomCenter){
+                   BottomRow(status = status, share = { storiesViewModel.share(status) }, delete = { storiesViewModel.delete(status)}) { storiesViewModel.save(status)}
+               }
+
+
+
+
 
 
 
@@ -123,7 +128,7 @@ object SingleFileScreen{
                 }*/
                // Image(painter = , contentDescription = )
             }
-            
+
 
         }
 
@@ -133,12 +138,13 @@ object SingleFileScreen{
 
     @Composable
     fun BottomRow(status: Status,
-                  modifier: Modifier = Modifier.background(MaterialTheme.colors.background) ,
+                  modifier: Modifier = Modifier ,
                   share : (Status) -> Unit,
                   delete : (Status)-> Unit,
                   save:(Status) -> Unit) {
-        Row(modifier = modifier.
-        fillMaxWidth(1f)) {
+        Row(modifier = modifier
+            .background(MaterialTheme.colors.background)
+            .fillMaxWidth(1f)) {
             Icon(imageVector = Icons.Filled.Share,
                 contentDescription = "share media",
                 Modifier

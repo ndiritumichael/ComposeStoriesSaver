@@ -25,7 +25,7 @@ import java.io.File
 class StoriesViewModel(application: Application):AndroidViewModel(application) {
    private val context = getApplication<Application>().applicationContext
 
-     val statusListstate = mutableStateOf<List<Status>>(listOf())
+    val isStoragePermissionEnabled  = mutableStateOf(false)
     val videoStatus = mutableStateOf<List<Status>>(listOf())
     val imageStatus = mutableStateOf<List<Status>>(listOf())
     lateinit var validFile: File
@@ -49,7 +49,10 @@ class StoriesViewModel(application: Application):AndroidViewModel(application) {
 
     }
 }
+fun updatePermssions(boolean: Boolean){
+    isStoragePermissionEnabled.value = boolean
 
+}
 
     fun getFiles(){
       //  var bitMap : Bitmap? = null
@@ -112,6 +115,15 @@ class StoriesViewModel(application: Application):AndroidViewModel(application) {
 
     fun share(status: Status) {
         Log.d("share", "Share Button Clicked ${status.path}")
+
+    }
+
+    fun delete(status: Status) {
+
+
+    }
+
+    fun save(status: Status) {
 
     }
 

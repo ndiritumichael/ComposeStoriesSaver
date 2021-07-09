@@ -48,14 +48,18 @@ fun StoryTabRow(
             ,horizontalArrangement = Arrangement.SpaceEvenly
         ,) {
             allScreens.forEach { screen ->
+                if(screen.icon != null){
+                    RallyTab(
+                        text = screen.name,
+                        icon = screen.icon,
+                        onSelected = { onTabSelected(screen) },
+                        selected = currentScreen == screen,
+                        modifier = Modifier.weight(1f)
+                    )
 
-                RallyTab(
-                    text = screen.name,
-                    icon = screen.icon,
-                    onSelected = { onTabSelected(screen) },
-                    selected = currentScreen == screen,
-                    modifier = Modifier.weight(1f)
-                )
+                }
+
+
             }
         }
     }
