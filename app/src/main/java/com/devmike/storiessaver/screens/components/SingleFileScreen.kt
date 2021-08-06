@@ -21,10 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.ImageLoader
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
 import com.devmike.storiessaver.R
 
 import com.devmike.storiessaver.model.Status
@@ -32,6 +36,7 @@ import com.devmike.storiessaver.viewmodel.StoriesViewModel
 
 
 import com.google.accompanist.glide.rememberGlidePainter
+import com.google.accompanist.imageloading.ImageLoadState
 
 import java.io.File
 
@@ -44,8 +49,15 @@ object SingleFileScreen {
         status: Status,
         navController: NavController,
         index: Int,
-        storiesViewModel: StoriesViewModel = viewModel()
+        storiesViewModel: StoriesViewModel = viewModel(),
+        loader: ImageLoader
     ) {
+val painter = rememberImagePainter(data = Uri.fromFile(File(status.path)),
+builder = {
+    crossfade(true)
+},
+imageLoader = loader)
+
         val glider = rememberGlidePainter(request = Uri.fromFile(File(status.path)))
 
 
@@ -92,7 +104,7 @@ object SingleFileScreen {
             ) {
 
                 Image(
-                    painter = glider,
+                    painter = painter,
                     contentDescription = "pictureDetail",
                     contentScale = ContentScale.Fit,
                     alignment = Alignment.Center,
@@ -127,17 +139,19 @@ object SingleFileScreen {
                 }
 
 
-                /* when (painter.loadState) {
-                     is ImageLoadState.Loading -> {
+                when (painter.state) {
+                     is ImagePainter.State.Loading -> {
                          // Display a circular progress indicator whilst loading
                          CircularProgressIndicator(Modifier.align(Alignment.Center))
                      }
-                     is ImageLoadState.Error -> {
+                     is ImagePainter.State.Error-> {
                          // If you wish to display some content if the request
                          Text(text = "Error Loading Image",color = Color.Red,fontSize = 24.sp)
                      }
-                     else -> {}
-                 }*/
+                     is ImagePainter.State.Success ->{
+
+                     }
+                 }
                 // Image(painter = , contentDescription = )
             }
 
@@ -192,7 +206,8 @@ object SingleFileScreen {
 @Composable
 fun StatusList(
     navHostController: NavHostController,
-    statusList: List<Status>
+    statusList: List<Status>,
+    imageLoader: ImageLoader
 
 ) {
 
@@ -210,7 +225,7 @@ fun StatusList(
             statusList.size / 2 + 1
         }
         items(statusCount) { index ->
-            StatusRow(rowIndex = index, navController = navHostController, statusList = statusList)
+            StatusRow(rowIndex = index, navController = navHostController, statusList = statusList,imageLoader)
 
 
             /* SingleFileScreen.SingleScreen(status = item) {
@@ -227,14 +242,18 @@ fun StatusList(
 fun StatusRow(
     rowIndex: Int,
     navController: NavHostController,
-    statusList: List<Status>
+    statusList: List<Status>,
+    imageLoader: ImageLoader
 ) {
     Column {
         Row {
             SingleFileScreen.SingleScreen(
                 status = statusList[rowIndex * 2],
                 modifier = Modifier.weight(1f),
-                navController = navController, index = rowIndex * 2
+                navController = navController, index = rowIndex * 2,
+                loader = imageLoader
+
+
             )
             Spacer(modifier = Modifier.width(16.dp))
             if (statusList.size >= rowIndex * 2 + 2) {
@@ -243,7 +262,8 @@ fun StatusRow(
                     status = statusList[rowIndex * 2 + 1],
                     modifier = Modifier.weight(1f),
                     navController = navController,
-                    index = rowIndex * 2 + 1
+                    index = rowIndex * 2 + 1,
+                    loader = imageLoader
                 )
 
 

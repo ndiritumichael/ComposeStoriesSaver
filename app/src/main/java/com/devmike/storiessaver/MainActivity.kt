@@ -3,26 +3,19 @@ package com.devmike.storiessaver
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.util.Log
-import android.view.contentcapture.ContentCaptureContext
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.devmike.storiessaver.ui.theme.StoriesSaverTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +25,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import coil.ImageLoader
+import coil.decode.VideoFrameDecoder
+import coil.fetch.VideoFrameFileFetcher
+import coil.fetch.VideoFrameUriFetcher
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.screens.AllScreens
 import com.devmike.storiessaver.screens.FullScreenStatus
@@ -142,6 +139,13 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     @Composable
     fun SaverScreen() {
+        val imageLoader = ImageLoader.Builder(LocalContext.current)
+            .componentRegistry {
+                add(VideoFrameFileFetcher(LocalContext.current))
+                add(VideoFrameUriFetcher(LocalContext.current))
+                add(VideoFrameDecoder(LocalContext.current))
+            }
+            .build()
         val coroutineScope = rememberCoroutineScope()
         val scaffoldStates = rememberScaffoldState()
         StoriesSaverTheme {
@@ -178,7 +182,8 @@ class MainActivity : ComponentActivity() {
                 StoryNavHost(
 
                     navHostController = navController,
-                    modifier = Modifier.padding(innerpadding)
+                    modifier = Modifier.padding(innerpadding),
+                    imageLoader
                 )
 
 
@@ -193,8 +198,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun StoryNavHost(
 
+
         navHostController: NavHostController,
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
+        imageLoader: ImageLoader
     ) {
 
 
@@ -215,7 +222,7 @@ class MainActivity : ComponentActivity() {
                   Spacer(modifier = Modifier
                       .fillMaxWidth(1f)
                       .height(4.dp))
-                  StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value)
+                  StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value,imageLoader)
 
 
               }
@@ -227,7 +234,11 @@ class MainActivity : ComponentActivity() {
                 Surface() {
                     Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
                 }
-                StatusList(navHostController = navHostController,storiesViewModel.videoStatus.value)
+                StatusList(
+                    navHostController = navHostController,
+                    statusList = storiesViewModel.videoStatus.value,
+                    imageLoader = imageLoader
+                )
 
             }
             composable(AllScreens.Saved.name) {
