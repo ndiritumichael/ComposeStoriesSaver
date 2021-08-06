@@ -1,14 +1,10 @@
-
 package com.devmike.storiessaver.screens.components
-
 
 
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 
@@ -25,10 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.ImageLoader
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
 import com.devmike.storiessaver.R
 
 import com.devmike.storiessaver.model.Status
@@ -36,15 +36,29 @@ import com.devmike.storiessaver.viewmodel.StoriesViewModel
 
 
 import com.google.accompanist.glide.rememberGlidePainter
+import com.google.accompanist.imageloading.ImageLoadState
 
 import java.io.File
 
-object SingleFileScreen{
-  
+object SingleFileScreen {
+
     @ExperimentalMaterialApi
     @Composable
-    fun SingleScreen(modifier: Modifier = Modifier,status: Status,navController: NavController,index : Int, storiesViewModel: StoriesViewModel = viewModel()){
-      val glider = rememberGlidePainter(request = Uri.fromFile(File(status.path)) )
+    fun SingleScreen(
+        modifier: Modifier = Modifier,
+        status: Status,
+        navController: NavController,
+        index: Int,
+        storiesViewModel: StoriesViewModel = viewModel(),
+        loader: ImageLoader
+    ) {
+val painter = rememberImagePainter(data = Uri.fromFile(File(status.path)),
+builder = {
+    crossfade(true)
+},
+imageLoader = loader)
+
+        val glider = rememberGlidePainter(request = Uri.fromFile(File(status.path)))
 
 
         // tried using coil painter unfortunately it can't get video previews
@@ -57,107 +71,122 @@ object SingleFileScreen{
 
         })*/
 
-        Card(onClick = {
-           Log.d("mikewil",status.path)
+        Card(
+            onClick = {
+                Log.d("mikewil", status.path)
 
-            val route = "fullScreen/${index}/"
+                val route = "fullScreen/${index}/"
 
-            Log.d("mikewil",route)
-            navController.currentBackStackEntry?.arguments = Bundle().apply {
-                putParcelable("key",status)
+                Log.d("mikewil", route)
+                navController.currentBackStackEntry?.arguments = Bundle().apply {
+                    putParcelable("key", status)
 
-            }
-
-
-            navController.navigate(route = "fullScreen")
+                }
 
 
+                navController.navigate(route = "fullScreen")
 
-        },
+
+            },border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
+            )
+            ,
 
 
-        modifier = modifier
-            .padding(top = 8.dp, bottom = 8.dp)
-            //.fillMaxWidth(0.5f) using this means it will utilize half of available space
-            .height(300.dp)) {
-            Box(modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .padding(top = 8.dp, bottom = 8.dp)
+                //.fillMaxWidth(0.5f) using this means it will utilize half of available space
+                .height(300.dp)
+        ) {
+            Box(
+                modifier = modifier.fillMaxSize(),
 
-                contentAlignment = Alignment.Center){
+                contentAlignment = Alignment.Center
+            ) {
 
-                    Image(painter = glider,
-                        contentDescription ="pictureDetail",
-                        contentScale = ContentScale.Fit,
-                        alignment = Alignment.Center,
+                Image(
+                    painter = painter,
+                    contentDescription = "pictureDetail",
+                    contentScale = ContentScale.Fit,
+                    alignment = Alignment.Center,
 
                     )
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color.Transparent,
-                                Color.Transparent,
-                                MaterialTheme.colors.surface
-                            ),
-                            startY = 300f
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.Transparent,
+                                    Color.Transparent,
+                                    Color.Transparent,
+                                    Color.Transparent,
+                                    MaterialTheme.colors.surface
+                                ),
+                                startY = 300f
+                            )
                         )
-                    ))
-               Box(modifier = Modifier.fillMaxSize(1f)
-                   .padding(8.dp),
-               contentAlignment = Alignment.BottomCenter){
-                   BottomRow(status = status, share = { storiesViewModel.share(status) }, delete = { storiesViewModel.delete(status)}) { storiesViewModel.save(status)}
-               }
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    BottomRow(
+                        status = status,
+                        share = { storiesViewModel.share(status) },
+                        delete = { storiesViewModel.delete(status) }) { storiesViewModel.save(status) }
+                }
 
 
+                when (painter.state) {
+                     is ImagePainter.State.Loading -> {
+                         // Display a circular progress indicator whilst loading
+                         CircularProgressIndicator(Modifier.align(Alignment.Center))
+                     }
+                     is ImagePainter.State.Error-> {
+                         // If you wish to display some content if the request
+                         Text(text = "Error Loading Image",color = Color.Red,fontSize = 24.sp)
+                     }
+                     is ImagePainter.State.Success ->{
 
-
-
-
-
-
-               /* when (painter.loadState) {
-                    is ImageLoadState.Loading -> {
-                        // Display a circular progress indicator whilst loading
-                        CircularProgressIndicator(Modifier.align(Alignment.Center))
-                    }
-                    is ImageLoadState.Error -> {
-                        // If you wish to display some content if the request
-                        Text(text = "Error Loading Image",color = Color.Red,fontSize = 24.sp)
-                    }
-                    else -> {}
-                }*/
-               // Image(painter = , contentDescription = )
+                     }
+                 }
+                // Image(painter = , contentDescription = )
             }
 
 
         }
 
 
-
     }
 
     @Composable
-    fun BottomRow(status: Status,
-                  modifier: Modifier = Modifier ,
-                  share : (Status) -> Unit,
-                  delete : (Status)-> Unit,
-                  save:(Status) -> Unit) {
-        Row(modifier = modifier
-            .background(MaterialTheme.colors.background)
-            .fillMaxWidth(1f)) {
+    fun BottomRow(
+        status: Status,
+        modifier: Modifier = Modifier,
+        share: (Status) -> Unit,
+        delete: (Status) -> Unit,
+        save: (Status) -> Unit
+    ) {
+        Row(
+            modifier = modifier
+
+                .fillMaxWidth(1f)
+        ) {
             Icon(imageVector = Icons.Filled.Share,
                 contentDescription = "share media",
                 Modifier
                     .clickable { share(status) }
                     .weight(1f))
 
-            if (status.saved){
+            if (status.saved) {
                 Icon(imageVector = Icons.Filled.Delete,
                     contentDescription = "share media",
                     Modifier
                         .clickable { delete(status) }
                         .weight(1f))
-            } else{
+            } else {
 
                 Icon(painterResource(id = R.drawable.ic_baseline_save_24),
                     contentDescription = "share media",
@@ -169,75 +198,82 @@ object SingleFileScreen{
         }
 
 
-
     }
 }
 
 
-
-
 @ExperimentalMaterialApi
 @Composable
-fun StatusList(navHostController: NavHostController,
-statusList : List<Status>
+fun StatusList(
+    navHostController: NavHostController,
+    statusList: List<Status>,
+    imageLoader: ImageLoader
 
 ) {
 
 
-   // Log.d("Status List", "${viewModel.statusListstate.value}")
-    LazyColumn(modifier = Modifier
-        .fillMaxHeight(1f)
-        .padding(8.dp)) {
+    // Log.d("Status List", "${viewModel.statusListstate.value}")
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxHeight(1f)
+            .padding(8.dp)
+    ) {
 
-        val statusCount = if (statusList.size% 2 ==0){
-            statusList.size /2
-        } else{ statusList.size/2 + 1}
-        items(statusCount){ index ->
-            StatusRow(rowIndex = index , navController = navHostController, statusList = statusList)
+        val statusCount = if (statusList.size % 2 == 0) {
+            statusList.size / 2
+        } else {
+            statusList.size / 2 + 1
+        }
+        items(statusCount) { index ->
+            StatusRow(rowIndex = index, navController = navHostController, statusList = statusList,imageLoader)
 
 
-
-           /* SingleFileScreen.SingleScreen(status = item) {
-                Log.d("Single Item","name :${item.path}")*/
-
-            }
+            /* SingleFileScreen.SingleScreen(status = item) {
+                 Log.d("Single Item","name :${item.path}")*/
 
         }
-    }
 
+    }
+}
 
 
 @ExperimentalMaterialApi
 @Composable
-fun StatusRow(rowIndex: Int,
-navController: NavHostController,
-statusList: List<Status>){
-Column {
-Row {
-   SingleFileScreen.SingleScreen(status = statusList[rowIndex * 2],
-   modifier = Modifier.weight(1f),
-   navController = navController, index = rowIndex *2
-   )
-    Spacer(modifier = Modifier.width(16.dp))
-if (statusList.size>= rowIndex* 2 +2){
-
-    SingleFileScreen.SingleScreen(
-        status = statusList[rowIndex *2 + 1],
-        modifier = Modifier.weight(1f),
-        navController = navController,
-        index = rowIndex*2+1
-    )
+fun StatusRow(
+    rowIndex: Int,
+    navController: NavHostController,
+    statusList: List<Status>,
+    imageLoader: ImageLoader
+) {
+    Column {
+        Row {
+            SingleFileScreen.SingleScreen(
+                status = statusList[rowIndex * 2],
+                modifier = Modifier.weight(1f),
+                navController = navController, index = rowIndex * 2,
+                loader = imageLoader
 
 
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            if (statusList.size >= rowIndex * 2 + 2) {
 
-}
-    else {
-    Spacer(modifier = Modifier.weight(1f))
+                SingleFileScreen.SingleScreen(
+                    status = statusList[rowIndex * 2 + 1],
+                    modifier = Modifier.weight(1f),
+                    navController = navController,
+                    index = rowIndex * 2 + 1,
+                    loader = imageLoader
+                )
+
+
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+
+        }
+
     }
-
-}
-
-}
 
 
 }
