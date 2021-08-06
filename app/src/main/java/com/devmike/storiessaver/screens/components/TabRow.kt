@@ -4,7 +4,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -20,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -45,8 +48,7 @@ fun StoryTabRow(
             .fillMaxWidth()
     ) {
         Row(Modifier.selectableGroup()
-            ,horizontalArrangement = Arrangement.SpaceEvenly
-        ,) {
+                   ,) {
             allScreens.forEach { screen ->
                 if(screen.icon != null){
                     RallyTab(
@@ -54,7 +56,9 @@ fun StoryTabRow(
                         icon = screen.icon,
                         onSelected = { onTabSelected(screen) },
                         selected = currentScreen == screen,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f).border(1.dp,
+                            if (isSystemInDarkTheme()) Color.White else Color.Black,
+                            RectangleShape)
                     )
 
                 }

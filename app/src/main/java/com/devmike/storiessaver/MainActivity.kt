@@ -12,15 +12,20 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.devmike.storiessaver.ui.theme.StoriesSaverTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 
@@ -201,14 +206,19 @@ class MainActivity : ComponentActivity() {
 
             composable(AllScreens.Images.name) {
                 val itemsNumber =  "${storiesViewModel.imageStatus.value.size} Statuses Found"
-                Surface() {
-                    Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f))
-                }
-                Spacer(modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(16.dp))
-                StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value)
+              Column {
+                  Surface() {
+                      Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f)
+                          .padding(top = 4.dp).align(Alignment.CenterHorizontally),
+                          textAlign = TextAlign.Center)
+                  }
+                  Spacer(modifier = Modifier
+                      .fillMaxWidth(1f)
+                      .height(4.dp))
+                  StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value)
 
+
+              }
 
             }
             composable(AllScreens.Videos.name) {

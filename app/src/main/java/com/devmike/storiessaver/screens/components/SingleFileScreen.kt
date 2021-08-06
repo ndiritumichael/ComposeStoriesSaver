@@ -4,9 +4,7 @@ package com.devmike.storiessaver.screens.components
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 
@@ -77,7 +75,9 @@ object SingleFileScreen {
                 navController.navigate(route = "fullScreen")
 
 
-            },
+            },border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
+            )
+            ,
 
 
             modifier = modifier
@@ -106,6 +106,8 @@ object SingleFileScreen {
                                 listOf(
                                     Color.Transparent,
                                     Color.Transparent,
+                                    Color.Transparent,
+                                    Color.Transparent,
                                     MaterialTheme.colors.surface
                                 ),
                                 startY = 300f
@@ -114,7 +116,7 @@ object SingleFileScreen {
                 )
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(1f)
+                        .fillMaxSize()
                         .padding(8.dp),
                     contentAlignment = Alignment.BottomCenter
                 ) {
@@ -155,7 +157,7 @@ object SingleFileScreen {
     ) {
         Row(
             modifier = modifier
-                .background(MaterialTheme.colors.background)
+
                 .fillMaxWidth(1f)
         ) {
             Icon(imageVector = Icons.Filled.Share,
