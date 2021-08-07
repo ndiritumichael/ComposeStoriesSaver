@@ -34,7 +34,9 @@ class StoriesViewModel(application: Application):AndroidViewModel(application) {
 /* val statusList: <List<Status>>
         get() = _statusList;*/
     init {
+    Log.d("contextcheck", "initialized")
     if (context == null) {
+
         Log.d("contextcheck", "context null")
     }
     val mainPath: String? = context.getExternalFilesDir(null)?.absolutePath
