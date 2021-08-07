@@ -1,6 +1,7 @@
 package com.devmike.storiessaver.screens.components
 
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,14 +31,14 @@ import androidx.navigation.NavHostController
 import coil.ImageLoader
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
+import coil.decode.VideoFrameDecoder
+import coil.fetch.VideoFrameFileFetcher
+import coil.fetch.VideoFrameUriFetcher
 import com.devmike.storiessaver.R
 
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
 
-
-import com.google.accompanist.glide.rememberGlidePainter
-import com.google.accompanist.imageloading.ImageLoadState
 
 import java.io.File
 
@@ -50,26 +52,24 @@ object SingleFileScreen {
         navController: NavController,
         index: Int,
         storiesViewModel: StoriesViewModel = viewModel(),
-        loader: ImageLoader
+       context: Context
     ) {
+
+        val imageLoader = ImageLoader.Builder(LocalContext.current)
+            .componentRegistry {
+                add(VideoFrameFileFetcher(LocalContext.current))
+                add(VideoFrameUriFetcher(LocalContext.current))
+                add(VideoFrameDecoder(LocalContext.current))
+            }
+            .build()
 val painter = rememberImagePainter(data = Uri.fromFile(File(status.path)),
 builder = {
     crossfade(true)
 },
-imageLoader = loader)
+    imageLoader = imageLoader
+)
 
-        val glider = rememberGlidePainter(request = Uri.fromFile(File(status.path)))
 
-
-        // tried using coil painter unfortunately it can't get video previews
-
-        /*val painter = rememberCoilPainter(request = when(status.type){
-         STATUS_TYPE.VIDEO ->{
-             status.bitmap
-         }
-            STATUS_TYPE.IMAGE -> File(status.path)
-
-        })*/
 
         Card(
             onClick = {
@@ -79,7 +79,7 @@ imageLoader = loader)
 
                 Log.d("mikewil", route)
                 navController.currentBackStackEntry?.arguments = Bundle().apply {
-                    putParcelable("key", status)
+                   putInt("key",index)
 
                 }
 
@@ -207,7 +207,7 @@ imageLoader = loader)
 fun StatusList(
     navHostController: NavHostController,
     statusList: List<Status>,
-    imageLoader: ImageLoader
+    context: Context
 
 ) {
 
@@ -225,7 +225,7 @@ fun StatusList(
             statusList.size / 2 + 1
         }
         items(statusCount) { index ->
-            StatusRow(rowIndex = index, navController = navHostController, statusList = statusList,imageLoader)
+            StatusRow(rowIndex = index, navController = navHostController, statusList = statusList,context = context)
 
 
             /* SingleFileScreen.SingleScreen(status = item) {
@@ -243,7 +243,7 @@ fun StatusRow(
     rowIndex: Int,
     navController: NavHostController,
     statusList: List<Status>,
-    imageLoader: ImageLoader
+   context: Context
 ) {
     Column {
         Row {
@@ -251,7 +251,7 @@ fun StatusRow(
                 status = statusList[rowIndex * 2],
                 modifier = Modifier.weight(1f),
                 navController = navController, index = rowIndex * 2,
-                loader = imageLoader
+              context = context
 
 
             )
@@ -263,7 +263,7 @@ fun StatusRow(
                     modifier = Modifier.weight(1f),
                     navController = navController,
                     index = rowIndex * 2 + 1,
-                    loader = imageLoader
+                    context = context
                 )
 
 

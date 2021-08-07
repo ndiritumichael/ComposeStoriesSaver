@@ -79,14 +79,14 @@ class MainActivity : ComponentActivity() {
             }
 
             storiesViewModel.updatePermssions(checkPermission(context))
-            var isPermissionenabled = storiesViewModel.isStoragePermissionEnabled.value
+            val isPermissionenabled = storiesViewModel.isStoragePermissionEnabled.value
 
 
 
 
 
             if (isPermissionenabled){
-                SaverScreen()
+                SaverScreen(context = context)
                 Log.d("perms","Permissions allowed")
 
 
@@ -138,14 +138,8 @@ class MainActivity : ComponentActivity() {
 
     @ExperimentalMaterialApi
     @Composable
-    fun SaverScreen() {
-        val imageLoader = ImageLoader.Builder(LocalContext.current)
-            .componentRegistry {
-                add(VideoFrameFileFetcher(LocalContext.current))
-                add(VideoFrameUriFetcher(LocalContext.current))
-                add(VideoFrameDecoder(LocalContext.current))
-            }
-            .build()
+    fun SaverScreen(context: Context) {
+
         val coroutineScope = rememberCoroutineScope()
         val scaffoldStates = rememberScaffoldState()
         StoriesSaverTheme {
@@ -183,8 +177,7 @@ class MainActivity : ComponentActivity() {
 
                     navHostController = navController,
                     modifier = Modifier.padding(innerpadding),
-                    imageLoader
-                )
+                    context = context              )
 
 
             }
@@ -201,7 +194,7 @@ class MainActivity : ComponentActivity() {
 
         navHostController: NavHostController,
         modifier: Modifier = Modifier,
-        imageLoader: ImageLoader
+        context: Context
     ) {
 
 
@@ -215,14 +208,16 @@ class MainActivity : ComponentActivity() {
                 val itemsNumber =  "${storiesViewModel.imageStatus.value.size} Statuses Found"
               Column {
                   Surface() {
-                      Text(text = itemsNumber,modifier = Modifier.fillMaxWidth(1f)
-                          .padding(top = 4.dp).align(Alignment.CenterHorizontally),
+                      Text(text = itemsNumber,modifier = Modifier
+                          .fillMaxWidth(1f)
+                          .padding(top = 4.dp)
+                          .align(Alignment.CenterHorizontally),
                           textAlign = TextAlign.Center)
                   }
                   Spacer(modifier = Modifier
                       .fillMaxWidth(1f)
                       .height(4.dp))
-                  StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value,imageLoader)
+                  StatusList(navHostController = navHostController,storiesViewModel.imageStatus.value,context)
 
 
               }
@@ -237,7 +232,7 @@ class MainActivity : ComponentActivity() {
                 StatusList(
                     navHostController = navHostController,
                     statusList = storiesViewModel.videoStatus.value,
-                    imageLoader = imageLoader
+                    context
                 )
 
             }
@@ -252,12 +247,12 @@ class MainActivity : ComponentActivity() {
             {
 
 
-                val status = navHostController.previousBackStackEntry?.arguments?.getParcelable<Status>("key")
+                val statusList = navHostController.previousBackStackEntry?.arguments?.getInt("key")
                 
                // Text(text = "${status?.path}")
 
-                if (status != null) {
-                    FullScreenStatus(status = status)
+                if (statusList != null) {
+                    FullScreenStatus(statuses = storiesViewModel.imageStatus.value ,context = context,index = statusList)
                 }
 
 
