@@ -35,6 +35,7 @@ import coil.decode.VideoFrameDecoder
 import coil.fetch.VideoFrameFileFetcher
 import coil.fetch.VideoFrameUriFetcher
 import com.devmike.storiessaver.R
+import com.devmike.storiessaver.model.STATUS_TYPE
 
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
@@ -74,12 +75,14 @@ builder = {
         Card(
             onClick = {
                 Log.d("mikewil", status.path)
+                val type = if (status.type == STATUS_TYPE.IMAGE) 1 else 2
 
                 val route = "fullScreen/${index}/"
 
                 Log.d("mikewil", route)
                 navController.currentBackStackEntry?.arguments = Bundle().apply {
                    putInt("key",index)
+                    putInt("type",type)
 
                 }
 

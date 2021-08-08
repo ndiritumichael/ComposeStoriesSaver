@@ -37,6 +37,7 @@ import com.devmike.storiessaver.screens.components.StoryTabRow
 
 
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 
 
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+    @ExperimentalPagerApi
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,6 +138,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @ExperimentalPagerApi
     @ExperimentalMaterialApi
     @Composable
     fun SaverScreen(context: Context) {
@@ -187,6 +190,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @ExperimentalPagerApi
     @ExperimentalMaterialApi
     @Composable
     private fun StoryNavHost(
@@ -248,11 +252,14 @@ class MainActivity : ComponentActivity() {
 
 
                 val statusList = navHostController.previousBackStackEntry?.arguments?.getInt("key")
+
+                //type will be 1 if an image or  if its a video
+                val type =  navHostController.previousBackStackEntry?.arguments?.getInt("type")
                 
-               // Text(text = "${status?.path}")
+
 
                 if (statusList != null) {
-                    FullScreenStatus(statuses = storiesViewModel.imageStatus.value ,context = context,index = statusList)
+                    FullScreenStatus(viewModel = storiesViewModel ,context = context,index = statusList,type = type!!)
                 }
 
 

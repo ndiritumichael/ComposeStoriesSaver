@@ -29,10 +29,7 @@ class StoriesViewModel(application: Application):AndroidViewModel(application) {
     val videoStatus = mutableStateOf<List<Status>>(listOf())
     val imageStatus = mutableStateOf<List<Status>>(listOf())
     lateinit var validFile: File
-   //  var bitMap : Bitmap? = null
 
-/* val statusList: <List<Status>>
-        get() = _statusList;*/
     init {
     Log.d("contextcheck", "initialized")
     if (context == null) {
