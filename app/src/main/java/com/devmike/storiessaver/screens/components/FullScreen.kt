@@ -34,7 +34,11 @@ import java.io.File
 
 @ExperimentalPagerApi
 @Composable
-fun FullScreenStatus(statuses: List<Status>, context: Context, index: Int){
+fun FullScreenStatus(viewModel:StoriesViewModel, context: Context, index: Int,type: Int){
+    val statuses = when (type){
+        1 -> viewModel.imageStatus.value
+        else -> viewModel.videoStatus.value
+    }
     val imageLoader = Utils.getImageLoader(context)
     val pagerState = rememberPagerState(pageCount = statuses.size,initialPage = index)
     val scope = rememberCoroutineScope()
