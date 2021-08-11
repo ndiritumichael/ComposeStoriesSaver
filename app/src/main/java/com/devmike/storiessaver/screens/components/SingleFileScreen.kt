@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,16 +29,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.Coil
 import coil.ImageLoader
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import coil.decode.VideoFrameDecoder
 import coil.fetch.VideoFrameFileFetcher
 import coil.fetch.VideoFrameUriFetcher
+import coil.request.ImageRequest
+import coil.request.SuccessResult
+import coil.util.CoilUtils
 import com.devmike.storiessaver.R
 import com.devmike.storiessaver.model.STATUS_TYPE
 
 import com.devmike.storiessaver.model.Status
+import com.devmike.storiessaver.utils.Utils
 import com.devmike.storiessaver.viewmodel.StoriesViewModel
 
 
@@ -56,25 +62,51 @@ object SingleFileScreen {
        context: Context
     ) {
 
-        val imageLoader = ImageLoader.Builder(LocalContext.current)
-            .componentRegistry {
-                add(VideoFrameFileFetcher(LocalContext.current))
-                add(VideoFrameUriFetcher(LocalContext.current))
-                add(VideoFrameDecoder(LocalContext.current))
-            }
+        val type = if (status.type == STATUS_TYPE.IMAGE) 1 else 2
+
+        val route = "fullScreen/${index}/"
+
+        Log.d("mikewil", route)
+        navController.currentBackStackEntry?.arguments = Bundle().apply {
+            putInt("key",index)
+            putInt("type",type)
+
+        }
+        val defaultDominantColor = MaterialTheme.colors.surface
+        var dominantColor = remember {
+            mutableStateOf(defaultDominantColor)
+        }
+
+       val imageLoader = Utils.getImageLoader(LocalContext.current)
+       val imageRequest = ImageRequest.Builder(LocalContext.current)
+            .data(File(status.path))
+           .allowConversionToBitmap(true)
+          /* .target(
+                onSuccess = {
+                        drawable ->
+                    storiesViewModel.calcDominantColor(drawable){color ->
+                        dominantColor.value= color
+
+                        Log.d("dominant","sucesss")
+
+
+                    }
+
+                }
+            )*/
+
             .build()
-val painter = rememberImagePainter(data = Uri.fromFile(File(status.path)),
-builder = {
-    crossfade(true)
-},
-    imageLoader = imageLoader
+
+
+val painter = rememberImagePainter( request = imageRequest
+
 )
 
 
 
         Card(
             onClick = {
-                Log.d("mikewil", status.path)
+               /* //Log.d("mikewil", status.path)
                 val type = if (status.type == STATUS_TYPE.IMAGE) 1 else 2
 
                 val route = "fullScreen/${index}/"
@@ -84,7 +116,7 @@ builder = {
                    putInt("key",index)
                     putInt("type",type)
 
-                }
+                }*/
 
 
                 navController.navigate(route = "fullScreen")
@@ -93,13 +125,18 @@ builder = {
             },border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
             )
             ,
+            elevation = 4.dp
+            ,
+
 
 
             modifier = modifier
                 .padding(top = 8.dp, bottom = 8.dp)
                 //.fillMaxWidth(0.5f) using this means it will utilize half of available space
                 .height(300.dp)
+                //.background(color = dominantColor.value)
         ) {
+
             Box(
                 modifier = modifier.fillMaxSize(),
 

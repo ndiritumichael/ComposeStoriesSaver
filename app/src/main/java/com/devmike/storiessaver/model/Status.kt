@@ -13,6 +13,7 @@ enum class STATUS_TYPE {
 data class Status(val path: String,
                   val type: STATUS_TYPE,
                   val bitmap: Bitmap? = null ,
-val saved : Boolean = false):Parcelable{
+val saved : Boolean = false,
+ ):Parcelable{
 
 }
