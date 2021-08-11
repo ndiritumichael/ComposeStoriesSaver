@@ -91,10 +91,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.15.0"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.15.0"
 
-
-
-
-
+    //palette dependencies
+    implementation 'androidx.palette:palette-ktx:1.0.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

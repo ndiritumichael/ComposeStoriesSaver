@@ -2,6 +2,8 @@ package com.devmike.storiessaver.viewmodel
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
@@ -9,13 +11,16 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.palette.graphics.Palette
 import com.devmike.storiessaver.BuildConfig
 import com.devmike.storiessaver.model.STATUS_TYPE
 import com.devmike.storiessaver.model.Status
 import com.devmike.storiessaver.utils.BitmapExtractor
+import com.devmike.storiessaver.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -124,6 +129,16 @@ fun updatePermssions(boolean: Boolean){
 
     fun save(status: Status) {
 
+    }
+
+    fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
+        val bmp = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        Palette.from(bmp).generate { palette ->
+            palette?.dominantSwatch?.rgb?.let { colorValue ->
+                onFinish(Color(colorValue))
+            }
+        }
     }
 
     /*fun extractBitmap(file:File):Bitmap?{
