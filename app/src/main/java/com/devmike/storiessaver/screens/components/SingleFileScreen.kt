@@ -81,7 +81,7 @@ object SingleFileScreen {
        val imageRequest = ImageRequest.Builder(LocalContext.current)
             .data(File(status.path))
            .allowConversionToBitmap(true)
-           /*.target(
+          /* .target(
                 onSuccess = {
                         drawable ->
                     storiesViewModel.calcDominantColor(drawable){color ->
