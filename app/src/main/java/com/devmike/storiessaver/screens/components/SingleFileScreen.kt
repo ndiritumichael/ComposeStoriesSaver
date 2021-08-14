@@ -68,12 +68,6 @@ object SingleFileScreen {
 
         val route = "fullScreen/${index}/"
 
-        Log.d("mikewil", route)
-        navController.currentBackStackEntry?.arguments = Bundle().apply {
-            putInt("key",index)
-            putInt("type",type)
-
-        }
         val defaultDominantColor = MaterialTheme.colors.surface
         var dominantColor = remember {
             mutableStateOf(defaultDominantColor)
@@ -107,8 +101,8 @@ val painter = rememberImagePainter( request = imageRequest
 
 
         Card(
-            /*onClick = {
-               *//* //Log.d("mikewil", status.path)
+            onClick = {
+                //Log.d("mikewil", status.path)
                 val type = if (status.type == STATUS_TYPE.IMAGE) 1 else 2
 
                 val route = "fullScreen/${index}/"
@@ -118,13 +112,13 @@ val painter = rememberImagePainter( request = imageRequest
                    putInt("key",index)
                     putInt("type",type)
 
-                }*//*
+                }
 
 
 
 
 
-            }*/border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
+            },border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
             )
             ,
             elevation = 4.dp
