@@ -1,10 +1,12 @@
 package com.devmike.storiessaver.screens.components
 
 
+import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -105,8 +107,8 @@ val painter = rememberImagePainter( request = imageRequest
 
 
         Card(
-            onClick = {
-               /* //Log.d("mikewil", status.path)
+            /*onClick = {
+               *//* //Log.d("mikewil", status.path)
                 val type = if (status.type == STATUS_TYPE.IMAGE) 1 else 2
 
                 val route = "fullScreen/${index}/"
@@ -116,13 +118,13 @@ val painter = rememberImagePainter( request = imageRequest
                    putInt("key",index)
                     putInt("type",type)
 
-                }*/
+                }*//*
 
 
-                navController.navigate(route = "fullScreen")
 
 
-            },border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
+
+            }*/border = BorderStroke(1.dp, if (isSystemInDarkTheme()) Color.White else Color.Black
             )
             ,
             elevation = 4.dp
@@ -148,6 +150,11 @@ val painter = rememberImagePainter( request = imageRequest
                     contentDescription = "pictureDetail",
                     contentScale = ContentScale.Fit,
                     alignment = Alignment.Center,
+                    modifier = Modifier.clickable {
+
+                        Toast.makeText(context,"clicked",Toast.LENGTH_SHORT).show()
+                        navController.navigate(route = "fullScreen")
+                    }
 
                     )
                 Box(
@@ -175,7 +182,9 @@ val painter = rememberImagePainter( request = imageRequest
                     BottomRow(
                         status = status,
                         share = { storiesViewModel.share(status) },
-                        delete = { storiesViewModel.delete(status) }) { storiesViewModel.save(status) }
+                        delete = { storiesViewModel.delete(status) },
+                        save =   { storiesViewModel.save(status) }
+                    )
                 }
 
 
@@ -212,7 +221,7 @@ val painter = rememberImagePainter( request = imageRequest
         Row(
             modifier = modifier
 
-                .fillMaxWidth(1f)
+                .fillMaxWidth()
         ) {
             Icon(imageVector = Icons.Filled.Share,
                 contentDescription = "share media",
@@ -222,14 +231,14 @@ val painter = rememberImagePainter( request = imageRequest
 
             if (status.saved) {
                 Icon(imageVector = Icons.Filled.Delete,
-                    contentDescription = "share media",
+                    contentDescription = "Delete",
                     Modifier
                         .clickable { delete(status) }
                         .weight(1f))
             } else {
 
                 Icon(painterResource(id = R.drawable.ic_baseline_save_24),
-                    contentDescription = "share media",
+                    contentDescription = "Save",
                     Modifier
                         .clickable { save(status) }
                         .weight(1f))
