@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.ui.tooling.preview.Preview
 import com.devmike.storiessaver.ui.theme.StoriesSaverTheme
 import androidx.compose.foundation.layout.*
@@ -143,6 +144,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun SaverScreen(context: Context) {
 
+        fun  login(){
+            Log.d("try","things")
+        }
+        login()
+
+
+
         val coroutineScope = rememberCoroutineScope()
         val scaffoldStates = rememberScaffoldState()
         StoriesSaverTheme {
@@ -250,17 +258,18 @@ class MainActivity : ComponentActivity() {
           )
             {
 
-
-                val statusList = navHostController.previousBackStackEntry?.arguments?.getInt("key")
+               // val statusList = navHostController.previousBackStackEntry?.arguments?.getInt("key")
 
                 //type will be 1 if an image or  if its a video
-                val type =  navHostController.previousBackStackEntry?.arguments?.getInt("type")
-                
+               // val type =  navHostController.previousBackStackEntry?.arguments?.getInt("type")
+
+                val statusList = 1
+               // Text(text = "The card has been clicked",modifier = Modifier.background(MaterialTheme.colors.onPrimary))
 
 
-                if (statusList != null) {
-                    FullScreenStatus(viewModel = storiesViewModel ,context = context,index = statusList,type = type!!)
-                }
+
+                    FullScreenStatus(viewModel = storiesViewModel ,context = context,index = statusList,type = 1)
+
 
 
 
