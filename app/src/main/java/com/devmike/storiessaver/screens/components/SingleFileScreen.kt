@@ -129,7 +129,7 @@ val painter = rememberImagePainter( request = imageRequest
             modifier = modifier
                 .padding(top = 8.dp, bottom = 8.dp)
                 //.fillMaxWidth(0.5f) using this means it will utilize half of available space
-                .height(300.dp)
+                .height(200.dp)
                 //.background(color = dominantColor.value)
         ) {
 
