@@ -11,8 +11,10 @@ import coil.fetch.VideoFrameFileFetcher
 import coil.fetch.VideoFrameUriFetcher
 import coil.request.ImageRequest
 import com.devmike.storiessaver.R
+import com.google.android.exoplayer2.SimpleExoPlayer
 
 object Utils {
+    fun getPlayer(context:Context) = SimpleExoPlayer.Builder(context).build()
 
     fun getImageLoader(context: Context) =  ImageLoader.Builder(context)
         .componentRegistry {
