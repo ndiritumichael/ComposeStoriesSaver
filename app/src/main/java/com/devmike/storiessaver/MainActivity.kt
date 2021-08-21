@@ -60,48 +60,52 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            val context = LocalContext.current
+            MaterialTheme() {
+
+                val context = LocalContext.current
 
 
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.RequestPermission()) { isGranted ->
-                storiesViewModel.updatePermssions(isGranted)
-                when (isGranted) {
-                    true -> {
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission()) { isGranted ->
+                    storiesViewModel.updatePermssions(isGranted)
+                    when (isGranted) {
+                        true -> {
 
-                        Log.d("perms","Storage Enabled")
+                            Log.d("perms","Storage Enabled")
 
-                        storiesViewModel.getFiles()
+                            storiesViewModel.getFiles()
+                        }
+                        false-> {
+                            Log.d("perms","Storage DisEnabled")
+                        }
                     }
-                    false-> {
-                        Log.d("perms","Storage DisEnabled")
+
+
+                }
+
+                storiesViewModel.updatePermssions(checkPermission(context))
+                val isPermissionenabled = storiesViewModel.isStoragePermissionEnabled.value
+
+
+
+
+
+                if (isPermissionenabled){
+                    SaverScreen(context = context)
+                    Log.d("perms","Permissions allowed")
+
+
+                } else{
+                    Button(onClick = { launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE) },
+                    ){
+                        Text(text = "Click Here To allow Permissions")
                     }
                 }
 
-                
+
+
+
             }
-
-            storiesViewModel.updatePermssions(checkPermission(context))
-            val isPermissionenabled = storiesViewModel.isStoragePermissionEnabled.value
-
-
-
-
-
-            if (isPermissionenabled){
-                SaverScreen(context = context)
-                Log.d("perms","Permissions allowed")
-
-
-            } else{
-             Button(onClick = { launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE) },
-             ){
-                 Text(text = "Click Here To allow Permissions")
-             }
-            }
-
-
-
         }
     }
 
@@ -144,10 +148,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun SaverScreen(context: Context) {
 
-        fun  login(){
-            Log.d("try","things")
-        }
-        login()
 
 
 
@@ -217,6 +217,7 @@ class MainActivity : ComponentActivity() {
         ) {
 
             composable(AllScreens.Images.name) {
+
                 val itemsNumber =  "${storiesViewModel.imageStatus.value.size} Statuses Found"
               Column {
                   Surface() {
@@ -258,17 +259,20 @@ class MainActivity : ComponentActivity() {
           )
             {
 
-               // val statusList = navHostController.previousBackStackEntry?.arguments?.getInt("key")
+                val statusList = navHostController.previousBackStackEntry?.arguments?.getInt("key")
 
-                //type will be 1 if an image or  if its a video
-               // val type =  navHostController.previousBackStackEntry?.arguments?.getInt("type")
+               // type will be 1 if an image or  if its a video
+               val type =  navHostController.previousBackStackEntry?.arguments?.getInt("type")
 
-                val statusList = 1
+                //val statusList = 1
                // Text(text = "The card has been clicked",modifier = Modifier.background(MaterialTheme.colors.onPrimary))
 
 
-
-                    FullScreenStatus(viewModel = storiesViewModel ,context = context,index = statusList,type = 1)
+                if (statusList != null) {
+                    if (type != null) {
+                        FullScreenStatus(viewModel = storiesViewModel ,context = context,index = statusList,type = type)
+                    }
+                }
 
 
 

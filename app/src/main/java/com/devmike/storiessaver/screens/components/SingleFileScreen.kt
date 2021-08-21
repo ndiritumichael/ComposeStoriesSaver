@@ -3,6 +3,7 @@ package com.devmike.storiessaver.screens.components
 
 import android.app.Application
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -94,15 +96,19 @@ object SingleFileScreen {
             .build()
 
 
-val painter = rememberImagePainter( request = imageRequest
+val painter = rememberImagePainter( data = File(status.path),
+    imageLoader = imageLoader
 
 )
+        var colors by remember {
 
+            mutableStateOf((Color.Transparent))
+        }
 
 
         Card(
             onClick = {
-                //Log.d("mikewil", status.path)
+                Log.d("mikewil", status.path)
                 val type = if (status.type == STATUS_TYPE.IMAGE) 1 else 2
 
                 val route = "fullScreen/${index}/"
@@ -113,6 +119,8 @@ val painter = rememberImagePainter( request = imageRequest
                     putInt("type",type)
 
                 }
+
+                navController.navigate("fullscreen")
 
 
 
@@ -144,11 +152,7 @@ val painter = rememberImagePainter( request = imageRequest
                     contentDescription = "pictureDetail",
                     contentScale = ContentScale.Fit,
                     alignment = Alignment.Center,
-                    modifier = Modifier.clickable {
 
-                        Toast.makeText(context,"clicked",Toast.LENGTH_SHORT).show()
-                        navController.navigate(route = "fullScreen")
-                    }
 
                     )
                 Box(
