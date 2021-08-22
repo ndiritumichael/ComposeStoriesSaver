@@ -45,7 +45,7 @@ fun FullScreenStatus(viewModel:StoriesViewModel, context: Context, index: Int,ty
     val pagerState = rememberPagerState(pageCount = statuses.size,initialPage = index)
     val scope = rememberCoroutineScope()
     val modifier = Modifier.fillMaxSize(1f)
-    val  player =  Utils.getPlayer(LocalContext.current)
+
 
 
 
@@ -60,7 +60,7 @@ HorizontalPager(state = pagerState) {pager ->
     when(status.type){
         STATUS_TYPE.VIDEO ->{
 
-            MyPlayer(path = status.path,player)
+            MyPlayer(path = status.path)
 
         }
         STATUS_TYPE.IMAGE ->{
@@ -115,7 +115,8 @@ fun ShowImage(status: Status,modifier: Modifier = Modifier,painter:ImagePainter,
 }
 
 @Composable
-fun MyPlayer(path: String, player: SimpleExoPlayer) {
+fun MyPlayer(path: String) {
+   val player = SimpleExoPlayer.Builder(LocalContext.current).build()
    val item = Uri.fromFile(File(path))
 
 
