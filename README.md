@@ -13,7 +13,8 @@ Compose Stories Saver is a demo application based on the new Declarative UI tool
 </br>
 
 <p align="center">
-<img src="/previews/preview2.png" />
+<img src="/previews/list.jpeg" />
+<img src = "/previews/storyVideo.jpeg"/>
 </p>
 
 
@@ -41,8 +42,8 @@ GBWhatsapp="GBWhatsApp/Media/.Statuses"
 
 
 - [Accompanist](https://github.com/google/accompanist) - A collection of extension libraries for Jetpack Compose described below
-- [Accompanist-Pager](https://google.github.io/accompanist/pager/) A ViewPager-like library which provides paging layouts for Jetpack Compose.
-- [Accompanist-Navigation Animation](https://google.github.io/accompanist/navigation-animation) for providing navigation Animations e.g Pop in ,Pop Out, in Compose Navigation
+  - [Accompanist-Pager](https://google.github.io/accompanist/pager/) A ViewPager-like library which provides paging layouts for Jetpack Compose.
+  - [Accompanist-Navigation Animation](https://google.github.io/accompanist/navigation-animation) for providing navigation Animations e.g Pop in ,Pop Out, in Compose Navigation
 
 
 - [Coil](https://coil-kt.github.io/coil/) An image loading library for Android backed by Kotlin Coroutines.
