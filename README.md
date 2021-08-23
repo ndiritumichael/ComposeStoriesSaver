@@ -12,9 +12,11 @@ Compose Stories Saver is a demo application based on the new Declarative UI tool
 </p>
 </br>
 
+
+
 <p align="center">
-<img src="/previews/list.jpeg" />
-<img src = "/previews/storyVideo.jpeg"/>
+<img src="/previews/list.jpeg" width = "400"/>
+<img src = "/previews/storyVideo.jpeg" width = "400"/>
 </p>
 
 
