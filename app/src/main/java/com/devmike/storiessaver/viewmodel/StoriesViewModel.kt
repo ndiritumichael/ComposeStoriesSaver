@@ -28,7 +28,15 @@ import java.io.File
 
 
 class StoriesViewModel(application: Application):AndroidViewModel(application) {
-   private val context = getApplication<Application>().applicationContext
+   private val context = application.baseContext
+
+
+
+
+
+
+
+
 
     val isStoragePermissionEnabled  = mutableStateOf(false)
     val videoStatus = mutableStateOf<List<Status>>(listOf())
