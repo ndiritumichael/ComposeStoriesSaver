@@ -181,7 +181,7 @@ val painter = rememberImagePainter( data = File(status.path),
                         status = status,
                         share = { storiesViewModel.share(status) },
                         delete = { storiesViewModel.delete(status) },
-                        save =   { storiesViewModel.save(status) }
+                        save =   { storiesViewModel.save11(status) }
                     )
                 }
 

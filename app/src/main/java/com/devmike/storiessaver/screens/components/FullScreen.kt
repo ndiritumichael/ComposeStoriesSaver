@@ -45,6 +45,9 @@ fun FullScreenStatus(viewModel:StoriesViewModel, context: Context, index: Int,ty
     val pagerState = rememberPagerState(pageCount = statuses.size,initialPage = index)
     val scope = rememberCoroutineScope()
     val modifier = Modifier.fillMaxSize(1f)
+    var playWhenReady = true
+    var currentWindow = 0
+    var playbackPosition = 0L
 
 
 
